@@ -1,0 +1,68 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: test_float_amount.py
+      id: test_float_amount-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 3
+        setup-command: sudo -H pip3 install pytest
+    - name: test_invalid_currency
+      id: test_invalid_currency
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 2
+        setup-command: sudo -H pip3 install pytest
+    - name: test_invalid_amount
+      id: test_invalid_amount
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 2
+        setup-command: sudo -H pip3 install pytest
+    - name: test_usd_conversion
+      id: test_usd_conversion
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 1
+        setup-command: sudo -H pip3 install pytest
+    - name: test_yuan_conversion
+      id: test_yuan_conversion
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 1
+        setup-command: sudo -H pip3 install pytest
+    - name: test_baht_conversion
+      id: test_baht_conversion
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 1
+        setup-command: sudo -H pip3 install pytest
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST_FLOAT_AMOUNT-PY_RESULTS: "${{steps.test_float_amount-py.outputs.result}}"
+        TEST_INVALID_CURRENCY_RESULTS: "${{steps.test_invalid_currency.outputs.result}}"
+        TEST_INVALID_AMOUNT_RESULTS: "${{steps.test_invalid_amount.outputs.result}}"
+        TEST_USD_CONVERSION_RESULTS: "${{steps.test_usd_conversion.outputs.result}}"
+        TEST_YUAN_CONVERSION_RESULTS: "${{steps.test_yuan_conversion.outputs.result}}"
+        TEST_BAHT_CONVERSION_RESULTS: "${{steps.test_baht_conversion.outputs.result}}"
+      with:
+        runners: test_float_amount-py,test_invalid_currency,test_invalid_amount,test_usd_conversion,test_yuan_conversion,test_baht_conversion
