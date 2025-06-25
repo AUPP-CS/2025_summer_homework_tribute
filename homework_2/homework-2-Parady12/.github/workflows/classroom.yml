@@ -1,0 +1,84 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: test_extreme_bmi.py
+      id: test_extreme_bmi-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 2
+        setup-command: sudo -H pip3 install pytest
+    - name: test_invalid_bmi.py
+      id: test_invalid_bmi-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 1
+        setup-command: sudo -H pip3 install pytest
+    - name: test_negative_bmi.py
+      id: test_negative_bmi-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 2
+        setup-command: sudo -H pip3 install pytest
+    - name: test_normal_bmi.py
+      id: test_normal_bmi-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 1
+        setup-command: sudo -H pip3 install pytest
+    - name: test_obese_bmi.py
+      id: test_obese_bmi-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 1
+        setup-command: sudo -H pip3 install pytest
+    - name: test_overweight_bmi.py
+      id: test_overweight_bmi-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 1
+        setup-command: sudo -H pip3 install pytest
+    - name: test_underweight_bmi.py
+      id: test_underweight_bmi-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 1
+        setup-command: sudo -H pip3 install pytest
+    - name: test_unrealistic_bmi.py
+      id: test_unrealistic_bmi-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 1
+        max-score: 1
+        setup-command: sudo -H pip3 install pytest
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST_EXTREME_BMI-PY_RESULTS: "${{steps.test_extreme_bmi-py.outputs.result}}"
+        TEST_INVALID_BMI-PY_RESULTS: "${{steps.test_invalid_bmi-py.outputs.result}}"
+        TEST_NEGATIVE_BMI-PY_RESULTS: "${{steps.test_negative_bmi-py.outputs.result}}"
+        TEST_NORMAL_BMI-PY_RESULTS: "${{steps.test_normal_bmi-py.outputs.result}}"
+        TEST_OBESE_BMI-PY_RESULTS: "${{steps.test_obese_bmi-py.outputs.result}}"
+        TEST_OVERWEIGHT_BMI-PY_RESULTS: "${{steps.test_overweight_bmi-py.outputs.result}}"
+        TEST_UNDERWEIGHT_BMI-PY_RESULTS: "${{steps.test_underweight_bmi-py.outputs.result}}"
+        TEST_UNREALISTIC_BMI-PY_RESULTS: "${{steps.test_unrealistic_bmi-py.outputs.result}}"
+      with:
+        runners: test_extreme_bmi-py,test_invalid_bmi-py,test_negative_bmi-py,test_normal_bmi-py,test_obese_bmi-py,test_overweight_bmi-py,test_underweight_bmi-py,test_unrealistic_bmi-py
